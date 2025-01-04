@@ -6,20 +6,20 @@ rd /s /q "%temp%"
 mkdir "%temp%"
 
 :: Clean user temp files
-echo Cleaning up Quang's local temp files...
+echo Cleaning up local temp files...
 del /s /f /q "%USERPROFILE%\AppData\Local\Temp\*.*"
 rd /s /q "%USERPROFILE%\AppData\Local\Temp"
 mkdir "%USERPROFILE%\AppData\Local\Temp"
 
 :: Clean user LocalLow temp files
-echo Cleaning up Quang's LocalLow temp files...
+echo Cleaning up LocalLow temp files...
 del /s /f /q "%USERPROFILE%\AppData\LocalLow\Temp\*.*"
 rd /s /q "%USERPROFILE%\AppData\LocalLow\Temp"
 mkdir "%USERPROFILE%\AppData\LocalLow\Temp"
 
 :: Clean user roaming temp files
 if exist "%USERPROFILE%\AppData\Roaming\Temp" (
-    echo Cleaning up Quang's Roaming temp files...
+    echo Cleaning up Roaming temp files...
     del /s /f /q "%USERPROFILE%\AppData\Roaming\Temp\*.*"
     rd /s /q "%USERPROFILE%\AppData\Roaming\Temp"
     mkdir "%USERPROFILE%\AppData\Roaming\Temp"

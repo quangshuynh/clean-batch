@@ -71,14 +71,12 @@ for /d %%d in ("%USERPROFILE%\AppData\Local\AMD\DxcCache\*") do rd /s /q "%%d"
 for /d %%d in ("%USERPROFILE%\AppData\Roaming\Arrowhead\Helldivers2\shader_cache\*") do rd /s /q "%%d"
 
 :: Additional cleanup for Discord
-echo Cleaning Discord cache...
 if exist "%APPDATA%\discord\Cache" (
     del /s /f /q "%APPDATA%\discord\Cache\*.*"
     for /d %%d in ("%APPDATA%\discord\Cache\*") do rd /s /q "%%d"
 )
 
 :: Additional cleanup for Visual Studio Code
-echo Cleaning Visual Studio Code caches...
 if exist "%APPDATA%\Code\Cache" (
     del /s /f /q "%APPDATA%\Code\Cache\*.*"
     for /d %%d in ("%APPDATA%\Code\Cache\*") do rd /s /q "%%d"

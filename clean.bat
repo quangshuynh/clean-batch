@@ -42,9 +42,6 @@ mkdir "%WINDOWS_TEMP%"
 echo Cleaning up Prefetch files...
 del /s /f /q "%PREFETCH_DIR%\*.*"
 
-echo Emptying Recycle Bin...
-rd /s /q %systemdrive%\$Recycle.Bin
-
 echo Cleaning up system cache files...
 del /s /f /q "%DOWNLOAD_DIR%\*.*"
 
@@ -89,6 +86,9 @@ if exist "%APPDATA%\Code\logs" (
     del /s /f /q "%APPDATA%\Code\logs\*.*"
     for /d %%d in ("%APPDATA%\Code\logs\*") do rd /s /q "%%d"
 )
+
+echo Emptying Recycle Bin...
+rd /s /q %systemdrive%\$Recycle.Bin
 
 echo Cleanup completed!
 pause

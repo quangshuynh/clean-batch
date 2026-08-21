@@ -95,6 +95,283 @@ if exist "%APPDATA%\Code\logs" (
 echo Emptying Recycle Bin...
 rd /s /q %systemdrive%\$Recycle.Bin 2>nul
 
+:: Additional cleanup for Windows Error Reporting
+echo Cleaning Windows Error Reporting files...
+if exist "%LOCALAPPDATA%\Microsoft\Windows\WER" (
+    del /s /f /q "%LOCALAPPDATA%\Microsoft\Windows\WER\*.*" 2>nul
+    for /d %%d in ("%LOCALAPPDATA%\Microsoft\Windows\WER\*") do rd /s /q "%%d" 2>nul
+)
+if exist "C:\ProgramData\Microsoft\Windows\WER\ReportArchive" (
+    del /s /f /q "C:\ProgramData\Microsoft\Windows\WER\ReportArchive\*.*" 2>nul
+    for /d %%d in ("C:\ProgramData\Microsoft\Windows\WER\ReportArchive\*") do rd /s /q "%%d" 2>nul
+)
+if exist "C:\ProgramData\Microsoft\Windows\WER\ReportQueue" (
+    del /s /f /q "C:\ProgramData\Microsoft\Windows\WER\ReportQueue\*.*" 2>nul
+    for /d %%d in ("C:\ProgramData\Microsoft\Windows\WER\ReportQueue\*") do rd /s /q "%%d" 2>nul
+)
+
+:: Additional cleanup for Windows crash dumps
+echo Cleaning Windows crash dumps...
+del /f /q "C:\Windows\MEMORY.DMP" 2>nul
+if exist "C:\Windows\Minidump" (
+    del /s /f /q "C:\Windows\Minidump\*.*" 2>nul
+    for /d %%d in ("C:\Windows\Minidump\*") do rd /s /q "%%d" 2>nul
+)
+
+:: Additional cleanup for LiveKernelReports
+echo Cleaning LiveKernelReports...
+if exist "C:\Windows\LiveKernelReports" (
+    del /s /f /q "C:\Windows\LiveKernelReports\*.*" 2>nul
+    for /d %%d in ("C:\Windows\LiveKernelReports\*") do rd /s /q "%%d" 2>nul
+)
+
+:: Additional cleanup for Windows Delivery Optimization cache
+echo Cleaning Delivery Optimization cache...
+if exist "C:\Windows\ServiceProfiles\NetworkService\AppData\Local\Microsoft\Windows\DeliveryOptimization\Cache" (
+    del /s /f /q "C:\Windows\ServiceProfiles\NetworkService\AppData\Local\Microsoft\Windows\DeliveryOptimization\Cache\*.*" 2>nul
+    for /d %%d in ("C:\Windows\ServiceProfiles\NetworkService\AppData\Local\Microsoft\Windows\DeliveryOptimization\Cache\*") do rd /s /q "%%d" 2>nul
+)
+
+:: Additional cleanup for DirectX shader cache
+echo Cleaning DirectX shader cache...
+if exist "%LOCALAPPDATA%\D3DSCache" (
+    del /s /f /q "%LOCALAPPDATA%\D3DSCache\*.*" 2>nul
+    for /d %%d in ("%LOCALAPPDATA%\D3DSCache\*") do rd /s /q "%%d" 2>nul
+)
+
+:: Additional cleanup for NVIDIA shader cache
+echo Cleaning NVIDIA shader cache...
+if exist "%LOCALAPPDATA%\NVIDIA\DXCache" (
+    del /s /f /q "%LOCALAPPDATA%\NVIDIA\DXCache\*.*" 2>nul
+    for /d %%d in ("%LOCALAPPDATA%\NVIDIA\DXCache\*") do rd /s /q "%%d" 2>nul
+)
+if exist "%LOCALAPPDATA%\NVIDIA\GLCache" (
+    del /s /f /q "%LOCALAPPDATA%\NVIDIA\GLCache\*.*" 2>nul
+    for /d %%d in ("%LOCALAPPDATA%\NVIDIA\GLCache\*") do rd /s /q "%%d" 2>nul
+)
+if exist "%LOCALAPPDATA%\NVIDIA Corporation\NV_Cache" (
+    del /s /f /q "%LOCALAPPDATA%\NVIDIA Corporation\NV_Cache\*.*" 2>nul
+    for /d %%d in ("%LOCALAPPDATA%\NVIDIA Corporation\NV_Cache\*") do rd /s /q "%%d" 2>nul
+)
+if exist "C:\ProgramData\NVIDIA Corporation\NV_Cache" (
+    del /s /f /q "C:\ProgramData\NVIDIA Corporation\NV_Cache\*.*" 2>nul
+    for /d %%d in ("C:\ProgramData\NVIDIA Corporation\NV_Cache\*") do rd /s /q "%%d" 2>nul
+)
+
+:: Additional cleanup for AMD shader cache
+echo Cleaning AMD shader cache...
+if exist "%LOCALAPPDATA%\AMD\GLCache" (
+    del /s /f /q "%LOCALAPPDATA%\AMD\GLCache\*.*" 2>nul
+    for /d %%d in ("%LOCALAPPDATA%\AMD\GLCache\*") do rd /s /q "%%d" 2>nul
+)
+if exist "%LOCALAPPDATA%\AMD\VkCache" (
+    del /s /f /q "%LOCALAPPDATA%\AMD\VkCache\*.*" 2>nul
+    for /d %%d in ("%LOCALAPPDATA%\AMD\VkCache\*") do rd /s /q "%%d" 2>nul
+)
+
+:: Additional cleanup for Intel shader cache
+echo Cleaning Intel shader cache...
+if exist "%LOCALAPPDATA%\Intel\ShaderCache" (
+    del /s /f /q "%LOCALAPPDATA%\Intel\ShaderCache\*.*" 2>nul
+    for /d %%d in ("%LOCALAPPDATA%\Intel\ShaderCache\*") do rd /s /q "%%d" 2>nul
+)
+
+:: Additional cleanup for Windows thumbnail cache
+echo Cleaning Windows thumbnail cache...
+del /f /q "%LOCALAPPDATA%\Microsoft\Windows\Explorer\thumbcache_*.db" 2>nul
+del /f /q "%LOCALAPPDATA%\Microsoft\Windows\Explorer\iconcache_*.db" 2>nul
+
+:: Additional cleanup for Windows Explorer icon cache
+echo Cleaning Windows Explorer icon cache...
+if exist "%LOCALAPPDATA%\IconCache.db" (
+    del /f /q "%LOCALAPPDATA%\IconCache.db" 2>nul
+)
+
+:: Additional cleanup for Windows INetCache
+echo Cleaning Windows internet cache...
+if exist "%LOCALAPPDATA%\Microsoft\Windows\INetCache" (
+    del /s /f /q "%LOCALAPPDATA%\Microsoft\Windows\INetCache\*.*" 2>nul
+    for /d %%d in ("%LOCALAPPDATA%\Microsoft\Windows\INetCache\*") do rd /s /q "%%d" 2>nul
+)
+
+:: Additional cleanup for Microsoft Edge cache
+if exist "%LOCALAPPDATA%\Microsoft\Edge\User Data" (
+    echo Cleaning Microsoft Edge cache...
+    for /d %%p in ("%LOCALAPPDATA%\Microsoft\Edge\User Data\Default" "%LOCALAPPDATA%\Microsoft\Edge\User Data\Profile *") do (
+        if exist "%%~p\Cache" (
+            del /s /f /q "%%~p\Cache\*.*" 2>nul
+            for /d %%d in ("%%~p\Cache\*") do rd /s /q "%%d" 2>nul
+        )
+        if exist "%%~p\Code Cache" (
+            del /s /f /q "%%~p\Code Cache\*.*" 2>nul
+            for /d %%d in ("%%~p\Code Cache\*") do rd /s /q "%%d" 2>nul
+        )
+        if exist "%%~p\GPUCache" (
+            del /s /f /q "%%~p\GPUCache\*.*" 2>nul
+            for /d %%d in ("%%~p\GPUCache\*") do rd /s /q "%%d" 2>nul
+        )
+    )
+)
+
+:: Additional cleanup for Google Chrome cache
+if exist "%LOCALAPPDATA%\Google\Chrome\User Data" (
+    echo Cleaning Google Chrome cache...
+    for /d %%p in ("%LOCALAPPDATA%\Google\Chrome\User Data\Default" "%LOCALAPPDATA%\Google\Chrome\User Data\Profile *") do (
+        if exist "%%~p\Cache" (
+            del /s /f /q "%%~p\Cache\*.*" 2>nul
+            for /d %%d in ("%%~p\Cache\*") do rd /s /q "%%d" 2>nul
+        )
+        if exist "%%~p\Code Cache" (
+            del /s /f /q "%%~p\Code Cache\*.*" 2>nul
+            for /d %%d in ("%%~p\Code Cache\*") do rd /s /q "%%d" 2>nul
+        )
+        if exist "%%~p\GPUCache" (
+            del /s /f /q "%%~p\GPUCache\*.*" 2>nul
+            for /d %%d in ("%%~p\GPUCache\*") do rd /s /q "%%d" 2>nul
+        )
+    )
+)
+
+:: Additional cleanup for Brave cache
+if exist "%LOCALAPPDATA%\BraveSoftware\Brave-Browser\User Data" (
+    echo Cleaning Brave cache...
+    for /d %%p in ("%LOCALAPPDATA%\BraveSoftware\Brave-Browser\User Data\Default" "%LOCALAPPDATA%\BraveSoftware\Brave-Browser\User Data\Profile *") do (
+        if exist "%%~p\Cache" (
+            del /s /f /q "%%~p\Cache\*.*" 2>nul
+            for /d %%d in ("%%~p\Cache\*") do rd /s /q "%%d" 2>nul
+        )
+        if exist "%%~p\Code Cache" (
+            del /s /f /q "%%~p\Code Cache\*.*" 2>nul
+            for /d %%d in ("%%~p\Code Cache\*") do rd /s /q "%%d" 2>nul
+        )
+        if exist "%%~p\GPUCache" (
+            del /s /f /q "%%~p\GPUCache\*.*" 2>nul
+            for /d %%d in ("%%~p\GPUCache\*") do rd /s /q "%%d" 2>nul
+        )
+    )
+)
+
+:: Additional cleanup for Firefox cache
+if exist "%LOCALAPPDATA%\Mozilla\Firefox\Profiles" (
+    echo Cleaning Firefox cache...
+    for /d %%p in ("%LOCALAPPDATA%\Mozilla\Firefox\Profiles\*") do (
+        if exist "%%~p\cache2" (
+            del /s /f /q "%%~p\cache2\*.*" 2>nul
+            for /d %%d in ("%%~p\cache2\*") do rd /s /q "%%d" 2>nul
+        )
+        if exist "%%~p\startupCache" (
+            del /s /f /q "%%~p\startupCache\*.*" 2>nul
+            for /d %%d in ("%%~p\startupCache\*") do rd /s /q "%%d" 2>nul
+        )
+    )
+)
+
+:: Additional cleanup for Discord Code Cache and GPU Cache
+if exist "%APPDATA%\discord\Code Cache" (
+    echo Cleaning Discord Code Cache...
+    del /s /f /q "%APPDATA%\discord\Code Cache\*.*" 2>nul
+    for /d %%d in ("%APPDATA%\discord\Code Cache\*") do rd /s /q "%%d" 2>nul
+)
+if exist "%APPDATA%\discord\GPUCache" (
+    echo Cleaning Discord GPU Cache...
+    del /s /f /q "%APPDATA%\discord\GPUCache\*.*" 2>nul
+    for /d %%d in ("%APPDATA%\discord\GPUCache\*") do rd /s /q "%%d" 2>nul
+)
+
+:: Additional cleanup for Spotify cache
+if exist "%LOCALAPPDATA%\Spotify\Storage" (
+    echo Cleaning Spotify cache...
+    del /s /f /q "%LOCALAPPDATA%\Spotify\Storage\*.*" 2>nul
+    for /d %%d in ("%LOCALAPPDATA%\Spotify\Storage\*") do rd /s /q "%%d" 2>nul
+)
+
+:: Additional cleanup for Steam HTML cache
+if exist "%LOCALAPPDATA%\Steam\htmlcache" (
+    echo Cleaning Steam HTML cache...
+    del /s /f /q "%LOCALAPPDATA%\Steam\htmlcache\*.*" 2>nul
+    for /d %%d in ("%LOCALAPPDATA%\Steam\htmlcache\*") do rd /s /q "%%d" 2>nul
+)
+
+:: Additional cleanup for Epic Games Launcher cache
+if exist "%LOCALAPPDATA%\EpicGamesLauncher\Saved" (
+    echo Cleaning Epic Games Launcher cache...
+    for /d %%d in ("%LOCALAPPDATA%\EpicGamesLauncher\Saved\webcache*") do rd /s /q "%%d" 2>nul
+)
+
+:: Additional cleanup for Battle.net cache
+if exist "%ProgramData%\Battle.net" (
+    echo Cleaning Battle.net cache...
+    if exist "%ProgramData%\Battle.net\Setup" (
+        del /s /f /q "%ProgramData%\Battle.net\Setup\*.*" 2>nul
+        for /d %%d in ("%ProgramData%\Battle.net\Setup\*") do rd /s /q "%%d" 2>nul
+    )
+)
+
+:: Additional cleanup for Visual Studio Code GPU Cache
+if exist "%APPDATA%\Code\GPUCache" (
+    echo Cleaning VS Code GPU Cache...
+    del /s /f /q "%APPDATA%\Code\GPUCache\*.*" 2>nul
+    for /d %%d in ("%APPDATA%\Code\GPUCache\*") do rd /s /q "%%d" 2>nul
+)
+
+:: Additional cleanup for Visual Studio Code Code Cache
+if exist "%APPDATA%\Code\Code Cache" (
+    echo Cleaning VS Code Code Cache...
+    del /s /f /q "%APPDATA%\Code\Code Cache\*.*" 2>nul
+    for /d %%d in ("%APPDATA%\Code\Code Cache\*") do rd /s /q "%%d" 2>nul
+)
+
+:: Additional cleanup for Visual Studio component cache
+if exist "%LOCALAPPDATA%\Microsoft\VisualStudio" (
+    echo Cleaning Visual Studio component cache...
+    for /d %%v in ("%LOCALAPPDATA%\Microsoft\VisualStudio\*") do (
+        if exist "%%~v\ComponentModelCache" (
+            del /s /f /q "%%~v\ComponentModelCache\*.*" 2>nul
+            for /d %%d in ("%%~v\ComponentModelCache\*") do rd /s /q "%%d" 2>nul
+        )
+    )
+)
+
+:: Additional cleanup for NuGet HTTP cache
+echo Cleaning NuGet HTTP cache...
+where dotnet >nul 2>&1
+if not errorlevel 1 (
+    dotnet nuget locals http-cache --clear >nul 2>&1
+)
+
+:: Additional cleanup for npm cache
+echo Cleaning npm cache...
+where npm >nul 2>&1
+if not errorlevel 1 (
+    call npm cache clean --force >nul 2>&1
+)
+
+:: Additional cleanup for pip cache
+echo Cleaning pip cache...
+where python >nul 2>&1
+if not errorlevel 1 (
+    python -m pip cache purge >nul 2>&1
+)
+
+:: Additional cleanup for Windows upgrade log files
+echo Cleaning Windows upgrade log files...
+if exist "C:\Windows\Logs\MoSetup" (
+    del /s /f /q "C:\Windows\Logs\MoSetup\*.*" 2>nul
+    for /d %%d in ("C:\Windows\Logs\MoSetup\*") do rd /s /q "%%d" 2>nul
+)
+
+:: Additional cleanup for old CHKDSK files
+echo Cleaning old CHKDSK files...
+del /f /q "%SystemDrive%\FOUND.???\*.CHK" 2>nul
+
+:: Additional cleanup using Windows Disk Cleanup
+echo Running Windows Disk Cleanup...
+cleanmgr /verylowdisk /d %SystemDrive% >nul 2>&1
+
+:: Additional cleanup for Windows component store
+echo Cleaning Windows component store...
+DISM /Online /Cleanup-Image /StartComponentCleanup /Quiet >nul 2>&1
+
 :: Capture free space AFTER (in bytes) on the system drive
 for /f "usebackq delims=" %%A in (`powershell -NoProfile -Command "(Get-PSDrive -Name ($env:SystemDrive.TrimEnd(':'))).Free"`) do set "AFTER_FREE=%%A"
 

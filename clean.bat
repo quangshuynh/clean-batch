@@ -414,10 +414,6 @@ if exist "C:\Windows\Logs\MoSetup" (
 echo Cleaning old CHKDSK files...
 del /f /q "%SystemDrive%\FOUND.???\*.CHK" 2>nul
 
-:: Disk Cleanup: run cleanmgr in very-low-disk mode for the system drive.
-echo Running Windows Disk Cleanup...
-cleanmgr /verylowdisk /d %SystemDrive% >nul 2>&1
-
 :: Component store: run DISM StartComponentCleanup to remove superseded components.
 echo Cleaning Windows component store...
 DISM /Online /Cleanup-Image /StartComponentCleanup /Quiet >nul 2>&1

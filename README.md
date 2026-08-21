@@ -40,7 +40,6 @@ The cleanup includes:
 * npm cache
 * pip cache
 * DNS cache
-* Windows Component Store cleanup
 
 At the end of the process, the script displays the amount of disk space recovered in GB, MB, and bytes.
 

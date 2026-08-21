@@ -414,9 +414,6 @@ if exist "C:\Windows\Logs\MoSetup" (
 echo Cleaning old CHKDSK files...
 del /f /q "%SystemDrive%\FOUND.???\*.CHK" 2>nul
 
-:: Component store: run DISM StartComponentCleanup to remove superseded components.
-echo Cleaning Windows component store...
-DISM /Online /Cleanup-Image /StartComponentCleanup /Quiet >nul 2>&1
 
 :: Record available space after cleanup (bytes).
 for /f "usebackq delims=" %%A in (`powershell -NoProfile -Command "(Get-PSDrive -Name ($env:SystemDrive.TrimEnd(':'))).Free"`) do set "AFTER_FREE=%%A"

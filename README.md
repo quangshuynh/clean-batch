@@ -1,200 +1,89 @@
-# Windows Cleanup Script
+# Clean Batch
 
-A comprehensive Windows batch script for clearing temporary files, application caches, browser caches, shader caches, development-tool caches, and other unnecessary files.
+[![CI](https://github.com/quangshuynh/clean-batch/actions/workflows/ci.yml/badge.svg)](https://github.com/quangshuynh/clean-batch/actions/workflows/ci.yml)
+![Platform](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D4?logo=windows&logoColor=white)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-The script also measures available disk space before and after cleanup and reports approximately how much storage was recovered.
+Clean Batch is a focused Windows Batch utility that removes regenerable temporary files, application and browser caches, diagnostic data, and developer-tool caches. It measures free space before and after cleanup and reports the approximate amount reclaimed. Some system locations require administrator privileges.
 
-## Features
+## Highlights
 
-The cleanup includes:
+- Remains a single, dependency-free Batch application.
+- Covers common Windows, browser, graphics, application, and development caches.
+- Detects optional developer tools before invoking them.
+- Continues past locked, missing, or access-restricted files.
+- Reports reclaimed space in GB, MB, and bytes.
 
-* Windows temporary files
-* User `Temp`, `LocalLow`, and `Roaming` temporary files
-* Windows Prefetch files
-* Windows Update download cache
-* Recycle Bin
-* Windows Error Reporting files
-* Windows crash dumps and minidumps
-* LiveKernelReports
-* Delivery Optimization cache
-* Windows thumbnail and icon caches
-* Windows internet cache
-* Windows upgrade logs
-* Old CHKDSK files
-* DirectX shader cache
-* NVIDIA shader caches
-* AMD shader caches
-* Intel shader cache
-* Microsoft Edge cache
-* Google Chrome cache
-* Brave cache
-* Firefox cache
-* Discord cache
-* Spotify cache
-* Steam HTML cache
-* Epic Games Launcher web cache
-* Battle.net cache
-* Visual Studio Code caches and logs
-* Visual Studio component cache
-* NuGet HTTP cache
-* npm cache
-* pip cache
-* DNS cache
+## What It Cleans
 
-At the end of the process, the script displays the amount of disk space recovered in GB, MB, and bytes.
+| Category | Targets |
+| --- | --- |
+| Windows | User and system temporary files, Prefetch, Windows Update downloads, Recycle Bin, DNS cache, Delivery Optimization data, thumbnails/icons, internet cache, upgrade logs, and recovered CHKDSK files |
+| Diagnostics | Windows Error Reporting data, crash dumps, minidumps, and LiveKernelReports |
+| Browsers | Cache, Code Cache, and GPUCache data for Microsoft Edge, Google Chrome, and Brave profiles; Firefox `cache2` and `startupCache` |
+| Graphics | DirectX, NVIDIA, AMD, and Intel shader caches |
+| Applications | Discord, Spotify, Steam, Epic Games Launcher, Battle.net, Visual Studio Code (VS Code), Visual Studio, and the Helldivers 2 shader cache |
+| Developer tools | NuGet HTTP cache, npm cache, and pip cache |
+
+The script targets cache contents and known diagnostic locations. It does not intentionally delete browser profiles, bookmarks, saved passwords, or installed applications.
 
 ## Requirements
 
-* Windows 10 or Windows 11
-* Administrator privileges are recommended
-* PowerShell
-* Some cleanup operations require elevated permissions
+- Windows 10 or Windows 11
+- PowerShell, included with supported Windows versions, for disk-space measurement
+- Administrator privileges recommended; several system locations cannot be fully cleaned without elevation
 
-Optional tools are detected before their respective cleanup commands are executed:
-
-* `.NET / dotnet` for NuGet cache cleanup
-* `npm` for npm cache cleanup
-* Python for pip cache cleanup
-
-If one of these tools is not installed, its corresponding cleanup command is skipped.
+The NuGet, npm, and pip cleanup steps run only when `dotnet`, `npm`, and Python, respectively, are available.
 
 ## Usage
 
-1. Download the `.bat` file.
-2. Save it somewhere convenient.
-3. Right-click the file.
-4. Select **Run as administrator**.
-5. Allow the cleanup process to finish.
-6. Review the amount of storage recovered at the end.
+1. Download or clone this repository.
+2. Close browsers, games, launchers, editors, and other applications whose caches may be locked.
+3. Review `clean.bat` so you understand the selected cleanup locations.
+4. Right-click `clean.bat` and select **Run as administrator**.
+5. Review the reclaimed-space summary when cleanup completes.
 
-> [!IMPORTANT]
-> Running the script as administrator is recommended because several Windows system directories cannot be fully cleaned with standard user permissions.
-
-## What to Expect
-
-During execution, the script prints status messages such as:
-
-```text
-Cleaning up temporary files...
-Cleaning Windows Error Reporting files...
-Cleaning NVIDIA shader cache...
-Cleaning Google Chrome cache...
-Cleaning npm cache...
-Running Windows Disk Cleanup...
-Cleaning Windows component store...
-```
-
-When cleanup finishes, you will see a result similar to:
+Typical output ends with:
 
 ```text
 Cleanup completed!
 Cleared: 2.35 GB (2,406 MB, 2522873856 bytes)
 ```
 
-The exact amount recovered will vary between systems.
+The exact amount varies by system. A negative measurement is clamped to zero.
 
-## Cache Rebuilding
-
-Many of the files removed by this script are caches. Windows, browsers, games, drivers, and applications may automatically recreate them the next time they are used.
-
-As a result, the first launch of certain applications or games after cleanup may take slightly longer while their caches are rebuilt.
-
-Shader caches in particular may need to be regenerated by games or graphics applications.
-
-## Browser Cleanup
-
-The script clears cache-related directories for:
-
-* Microsoft Edge
-* Google Chrome
-* Brave
-* Mozilla Firefox
-
-Multiple Chromium browser profiles are included where applicable.
-
-The cleanup targets cache directories rather than intentionally deleting bookmarks, saved passwords, browsing profiles, or browser installations.
-
-> [!TIP]
-> Closing browsers before running the script can allow more cached files to be removed because files currently in use may be locked.
-
-## GPU & Shader Cache Cleanup
-
-The script targets several graphics-related caches, including:
-
-* DirectX shader cache
-* NVIDIA DXCache
-* NVIDIA GLCache
-* NVIDIA NV_Cache
-* AMD DxCache
-* AMD DxcCache
-* AMD GLCache
-* AMD VkCache
-* Intel ShaderCache
-
-These caches can consume disk space over time and are normally recreated when required.
-
-## Developer Cache Cleanup
-
-For development environments, the script includes cleanup for:
-
-* Visual Studio Code
-* Visual Studio
-* NuGet
-* npm
-* pip
-
-The script checks whether `dotnet`, `npm`, or Python are available before attempting their command-line cache cleanup operations.
-
-## Game & Launcher Cleanup
-
-Cache cleanup is also included for several gaming-related applications:
-
-* Steam
-* Epic Games Launcher
-* Battle.net
-* Discord
-* Helldivers 2 shader cache
-
-Only the targeted cache locations are cleaned.
-
-## Disk Space Reporting
-
-Before cleanup begins, the script records the amount of free space available on the Windows system drive.
-
-After all cleanup operations finish, it measures the drive again and calculates the difference.
-
-The final result is displayed in:
-
-* Gigabytes
-* Megabytes
-* Bytes
-
-If the calculated difference is negative, the reported amount is clamped to zero.
-
-## Important Notes
+## Safety and Important Notes
 
 > [!WARNING]
-> Review the script before running it. It performs recursive and forced deletion operations across numerous temporary, cache, diagnostic, and system locations.
+> This script performs forced and recursive deletion in explicit temporary, cache, diagnostic, and system locations. Review it before use and keep backups of important data.
 
-Some files may not be removed because they are:
+- Environment roots used in deletion paths are validated before cleanup begins.
+- Paths containing spaces are quoted, and optional command-line tools are availability-checked.
+- Most missing-file, locked-file, and access-denied errors are suppressed so one inaccessible target does not stop later cleanup steps.
+- Closing affected applications lets the script remove more cached files.
+- Cache removal can make the next application or game launch slower while data is rebuilt; shader regeneration may cause temporary stutter.
+- The script does not stop services before clearing Windows Update data, so files in use may remain.
 
-* Currently in use
-* Locked by another process
-* Protected by Windows
-* Restricted by permissions
+There is intentionally no `--dry-run` mode. Accurately simulating every Batch deletion and external cache command would require duplicating or wrapping most operations, adding complexity disproportionate to this small utility. Automated tests therefore use static safety and regression checks and never execute destructive cleanup.
 
-Most deletion errors are intentionally suppressed so that one inaccessible file does not interrupt the rest of the cleanup process.
+## How It Works
 
-For the best results, close browsers, games, launchers, editors, and other applications before running the script.
+The script records free space on the Windows system drive, processes each cleanup category, records free space again, and formats the non-negative difference through PowerShell. `dotnet`, `npm`, and Python commands are guarded with `where` checks; unavailable tools are skipped.
 
-## Disclaimer
+Windows Disk Cleanup (`cleanmgr`) and component-store servicing (`DISM`) are not run. Clean Batch limits itself to the explicit locations and cache commands visible in `clean.bat`.
 
-This script is provided as-is.
+## Testing
 
-Although it targets temporary files, caches, logs, crash reports, and other cleanup locations, you should review the script and understand the commands before running it on your system.
+The dependency-free PowerShell suite performs structural, documentation-consistency, and safety regression checks. It verifies the major cleanup categories, browser and developer-cache coverage, optional-tool guards, environment-variable guards, bounded and quoted recursive removals, disk-space reporting, README accuracy, and CI configuration.
 
-Use it at your own discretion, especially on systems containing important or irreplaceable data.
+Run it locally from the repository root:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tests\CleanBatch.Tests.ps1
+```
+
+GitHub Actions runs the same suite on a Windows runner. CI intentionally does **not** execute `clean.bat` or perform real cleanup. Static checks reduce regression risk but cannot prove that every deletion is safe on every Windows installation; manual review remains important.
 
 ## License
 
-No license has been specified yet.
+Licensed under the [MIT License](LICENSE).

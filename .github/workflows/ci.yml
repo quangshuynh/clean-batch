@@ -10,12 +10,22 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  windows:
     runs-on: windows-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Run structural and safety regression tests
+      - name: Run Windows structural and safety regression tests
         shell: pwsh
         run: ./tests/CleanBatch.Tests.ps1
+
+  macos:
+    runs-on: macos-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Run macOS structural and safety regression tests
+        shell: bash
+        run: bash ./tests/CleanBatchMac.Tests.sh

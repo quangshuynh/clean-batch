@@ -23,7 +23,7 @@ The implementations remain native to each platform: `clean.bat` for Windows and 
 | Category | Windows | macOS |
 | --- | --- | --- |
 | Temporary files | User and system temporary locations | `$TMPDIR` |
-| Browsers | Edge, Chrome, Brave, Firefox caches | Edge, Chrome, Brave, Firefox caches |
+| Browsers | Microsoft Edge, Google Chrome, Brave, Firefox caches | Microsoft Edge, Google Chrome, Brave, Firefox caches |
 | Applications | Discord, Spotify, Steam, Epic Games Launcher, Battle.net, VS Code, Visual Studio | Discord, Spotify, Steam, VS Code |
 | Developer tools | NuGet HTTP cache, npm cache, pip cache | NuGet HTTP cache, npm cache, pip cache |
 | Diagnostics | Windows Error Reporting, crash dumps, minidumps, LiveKernelReports | User DiagnosticReports |

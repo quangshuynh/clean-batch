@@ -102,10 +102,10 @@ Test-Case 'README describes implemented behavior without stale maintenance claim
     Assert-Match $readme '(?i)static|structural|regression' 'README does not explain the test strategy.'
 }
 
-Test-Case 'CI is Windows-only and invokes tests without running cleanup' {
+Test-Case 'CI covers Windows and does not run cleanup' {
     Assert-Match $workflow '(?m)^name:\s*CI\s*$' 'Workflow name should be CI.'
     Assert-Match $workflow '(?m)^\s*runs-on:\s*windows-latest\s*$' 'CI must use a Windows runner.'
-    Assert-Match $workflow '(?i)CleanBatch\.Tests\.ps1' 'CI does not invoke the test suite.'
+    Assert-Match $workflow '(?i)CleanBatch\.Tests\.ps1' 'CI does not invoke the Windows test suite.'
     Assert-True ($workflow -notmatch '(?im)(?:^|[\\/\s])clean\.bat(?:\s|$)') 'CI must not execute clean.bat.'
     Assert-Match $workflow '(?m)^permissions:\s*\r?\n\s*contents:\s*read\s*$' 'CI permissions should be read-only.'
 }

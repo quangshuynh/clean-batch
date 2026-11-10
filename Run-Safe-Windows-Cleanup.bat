@@ -2,13 +2,13 @@
 setlocal EnableExtensions
 cd /d "%~dp0"
 if not exist "%~dp0Safe-Windows-Cleanup.ps1" (
-  echo Missing Safe-Windows-Cleanup.ps1 in the same folder.
+ echo Missing Safe-Windows-Cleanup.ps1 in the same folder.
   pause
   exit /b 1
 )
 echo.
-echo   SAFE WINDOWS CLEANUP
- echo   1 - Preview ordinary cleanup [recommended first]
+echo   SAFE WINDOWS CLEANUP v2.1
+echo   1 - Preview ordinary cleanup [recommended first]
 echo   2 - Run ordinary cleanup
 echo   3 - Preview deep cleanup (includes shader caches)
 echo   4 - Run deep cleanup (includes shader caches)

@@ -1,7 +1,7 @@
 #requires -Version 5.1
 <#
 .SYNOPSIS
-  Conservative Windows cache and stale-file cleaner.
+  Conservative Windows cache and stale-file cleaner (v2.1).
 .DESCRIPTION
   Defaults to preview mode. Deletes ordinary files only within an explicit allowlist.
   Never deletes directory trees or follows junctions/symlinks. Skips application
@@ -63,6 +63,9 @@ function Test-IsSafeSubpath {
         foreach ($root in $script:KnownRoots) {
             $base = $root.TrimEnd('\')
             if ($absolute.StartsWith($base + '\', [StringComparison]::OrdinalIgnoreCase)) { return $true }
+            # Only the explicitly supplied Temp directory itself may equal an allowlisted root.
+            if ($base.Equals([IO.Path]::GetFullPath($env:TEMP).TrimEnd('\'), [StringComparison]::OrdinalIgnoreCase) -and
+                $absolute.Equals($base, [StringComparison]::OrdinalIgnoreCase)) { return $true }
         }
     } catch { }
     return $false
@@ -144,6 +147,7 @@ function Scan-Target {
                 Path = $item.FullName
                 Bytes = [long]$item.Length
                 LastModified = $item.LastWriteTime
+                AgeDays = $Target.AgeDays
                 Result = 'Preview'
             })
         }
@@ -238,15 +242,31 @@ foreach ($target in $script:Targets) { Scan-Target $target }
 if ($Apply) {
     foreach ($entry in $script:Entries) {
         try {
-            # Revalidate immediately prior to each deletion; refuse symlinks and directories.
+            # A cache may change between scanning and deletion: validate its parent
+            # directory ancestry again, rejecting new junctions or symlinks.
+            $parentPath = [IO.Path]::GetDirectoryName($entry.Path)
+            $cursor = $parentPath
+            $safeAncestry = $true
+            while ($cursor) {
+                $attr = [IO.File]::GetAttributes($cursor)
+                if (($attr -band [IO.FileAttributes]::ReparsePoint) -ne 0) {
+                    $safeAncestry = $false
+                    break
+                }
+                $parent = [IO.Directory]::GetParent($cursor)
+                if ($null -eq $parent) { break }
+                $cursor = $parent.FullName
+            }
+            if (-not $safeAncestry) {
+                $entry.Result = 'Skipped (link in path)'
+                continue
+            }
             $file = Get-Item -LiteralPath $entry.Path -Force -ErrorAction Stop
             if ($file.PSIsContainer -or
                 (($file.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) -or
-                $file.LastWriteTime -ge $script:Now.AddDays(-$(
-                    if ($entry.Category -match 'temporary') { $TempDays }
-                    elseif ($entry.Category -match 'log') { $LogDays }
-                    else { $CacheDays }
-                ))) {
+                $file.LastWriteTime -ge $script:Now.AddDays(-$entry.AgeDays) -or
+                $file.Length -ne $entry.Bytes -or
+                $file.LastWriteTime -ne $entry.LastModified) {
                 $entry.Result = 'Skipped (changed)'
                 continue
             }
@@ -277,20 +297,30 @@ if ($RunComponentCleanup) {
     } else { Write-Host 'DISM: requested, but preview does not run it.' }
 }
 
-$wouldBytes = [long](($script:Entries | Measure-Object -Property Bytes -Sum).Sum)
-$done = @($script:Entries | Where-Object { $_.Result -eq 'Deleted' })
-$doneBytes = [long](($done | Measure-Object -Property Bytes -Sum).Sum)
+# Summing the list directly handles 0, 1, or many entries under StrictMode.
+# Measure-Object on an empty pipeline can return no object at all.
+$wouldBytes = [long]0
+$doneBytes = [long]0
+$doneCount = 0
+foreach ($entry in $script:Entries) {
+    $wouldBytes += [long]$entry.Bytes
+    if ($entry.Result -eq 'Deleted') {
+        $doneBytes += [long]$entry.Bytes
+        $doneCount++
+    }
+}
 Write-Host ''
 Write-Host ('Candidate files: {0:N0} | Candidate bytes: {1:N2} MB' -f $script:Entries.Count,($wouldBytes / 1MB))
 if ($Apply) {
-    Write-Host ('Deleted files: {0:N0} | Deleted logical bytes: {1:N2} MB' -f $done.Count,($doneBytes / 1MB))
+    Write-Host ('Deleted files: {0:N0} | Deleted logical bytes: {1:N2} MB' -f $doneCount,($doneBytes / 1MB))
     try {
         $after = (Get-PSDrive -Name $drive -ErrorAction Stop).Free
         if ($null -ne $before) { Write-Host ('System drive free-space change: {0:N2} MB' -f (($after - $before) / 1MB)) }
     } catch { }
 }
 $script:Entries | Group-Object Category | Sort-Object Name | ForEach-Object {
-    $sum = ($_.Group | Measure-Object Bytes -Sum).Sum
+    $sum = [long]0
+    foreach ($entry in $_.Group) { $sum += [long]$entry.Bytes }
     Write-Host ('  {0,-32} {1,7} files   {2,10:N2} MB' -f $_.Name,$_.Count,($sum / 1MB))
 }
 if ($script:Skipped.Count -gt 0) {
